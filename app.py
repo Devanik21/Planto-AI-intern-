@@ -26,7 +26,7 @@ import hashlib
 # Page configuration
 st.set_page_config(
     page_title="Advanced LLM Techniques Showcase",
-    page_icon="🚀",
+    page_icon="🦄",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -174,7 +174,7 @@ def create_network_graph(relationships):
 
 # Main app
 def main():
-    st.markdown('<h1 class="main-header">🚀 Advanced LLM Techniques Showcase</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 class="main-header">🦄 Advanced LLM Techniques Showcase</h1>', unsafe_allow_html=True)
     
     # Initialize Gemini
     model = init_gemini()
@@ -337,7 +337,7 @@ def main():
                                     """, unsafe_allow_html=True)
                             
                             # Generate response using Gemini
-                            with st.spinner("🤖 Generating response..."):
+                            with st.spinner("✨ Generating response..."):
                                 context = "\n\n".join([f"Document {r['index']+1}: {r['document']}" for r in filtered_results])
                                 
                                 prompt = f"""
@@ -369,7 +369,7 @@ Answer:"""
                                     st.session_state.rag_metrics['avg_similarity'] = total_similarity / len(filtered_results)
                                     st.session_state.rag_metrics['response_times'].append(response_time)
                                     
-                                    st.subheader("🤖 AI Generated Response")
+                                    st.subheader("✨ AI Generated Response")
                                     st.markdown(f'<div class="success-box">{response.text}</div>', unsafe_allow_html=True)
                                     
                                     # Show response metrics
@@ -781,7 +781,7 @@ class DataProcessor:
                     
                     try:
                         response = model.generate_content(prompt)
-                        st.subheader("🤖 AI Code Insights")
+                        st.subheader("✨ AI Code Insights")
                         st.markdown(f'<div class="info-box">{response.text}</div>', 
                                    unsafe_allow_html=True)
                     except Exception as e:
@@ -934,7 +934,7 @@ class DataProcessor:
         col1, col2, col3, col4 = st.columns(4)
         
         with col1:
-            st.metric("🚀 Active Models", "5", delta="2")
+            st.metric("🦄 Active Models", "5", delta="2")
         
         with col2:
             st.metric("⚡ Avg Latency", "245ms", delta="-12ms")
@@ -1083,7 +1083,7 @@ class DataProcessor:
         st.subheader("💡 Performance Insights")
         
         insights = [
-            "🚀 RAG system shows 23% improvement in response relevance",
+            "🦄 RAG system shows 23% improvement in response relevance",
             "⚡ Text compression reduces token usage by 45% while maintaining 94% quality",
             "🧠 Vectorized memory improves context retention by 67%",
             "🎯 Fine-tuned model outperforms base model by 18% on domain-specific tasks",
@@ -1101,7 +1101,7 @@ class DataProcessor:
     st.markdown("---")
     st.markdown("""
     <div style="text-align: center; padding: 2rem; background: linear-gradient(45deg, #667eea, #764ba2); color: white; border-radius: 10px; margin-top: 2rem;">
-        <h3>🚀 Advanced LLM Techniques Showcase</h3>
+        <h3>🦄 Advanced LLM Techniques Showcase</h3>
         <p>This application demonstrates cutting-edge techniques in Large Language Model optimization and deployment.</p>
         <p><strong>Built with:</strong> Streamlit • Gemini API • Advanced ML Techniques</p>
     </div>
