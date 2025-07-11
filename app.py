@@ -26,7 +26,7 @@ import hashlib
 # Page configuration
 st.set_page_config(
     page_title="Advanced LLM Techniques Showcase",
-    page_icon="🦄",
+    page_icon="✨",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -34,100 +34,62 @@ st.set_page_config(
 # Custom CSS for better UI
 st.markdown("""
 <style>
-    /* Glassy background for the whole app */
-    .stApp {
-        background: linear-gradient(135deg, rgba(102,126,234,0.25) 0%, rgba(76,205,196,0.18) 100%);
-        backdrop-filter: blur(8px);
-        min-height: 100vh;
-    }
-
-    /* Remove default grey/black backgrounds from Streamlit containers */
-    .block-container, .main, .stTabs, .stTabs [data-baseweb="tab-list"], .stTabs [data-baseweb="tab"],
-    [data-testid="stVerticalBlock"], [data-testid="stHorizontalBlock"], [data-testid="stExpander"], [data-testid="stDataFrame"] {
-        background: transparent !important;
-        box-shadow: none !important;
-    }
-
-    /* Glassy style for interactive widgets */
-    .stTextInput > div > div > input,
-    .stTextArea > div > div > textarea,
-    .stSelectbox > div > div > div,
-    .stSlider > div > div,
-    .stFileUploader > div > div,
-    .stButton > button {
-        background: rgba(255,255,255,0.15);
-        border-radius: 10px;
-        border: 1px solid rgba(255,255,255,0.2);
-        box-shadow: 0 2px 10px rgba(102,126,234,0.08);
-        backdrop-filter: blur(6px);
-        color: #222 !important;
-    }
-
-    /* Ensure text in inputs is readable */
-    .stTextInput > div > div > input,
-    .stTextArea > div > div > textarea {
-        color: #222 !important;
-    }
-
-    /* Style for buttons */
-    .stButton > button {
-        background: rgba(76,205,196,0.25) !important;
-        color: #222 !important;
+    .main-header {
+        font-size: 3rem;
         font-weight: bold;
-        border: 1px solid rgba(76,205,196,0.3);
-        box-shadow: 0 2px 8px rgba(76,205,196,0.15);
+        text-align: center;
+        background: linear-gradient(45deg, #FF6B6B, #4ECDC4, #45B7D1);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 2rem;
     }
-
-    /* Glassy card style for all custom boxes */
-    .metric-card, .success-box, .info-box, .warning-box {
-        background: rgba(255,255,255,0.18);
-        border-radius: 16px;
-        box-shadow: 0 4px 24px rgba(102,126,234,0.12);
-        color: #222 !important;
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255,255,255,0.25);
+    
+    .metric-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 1rem;
+        border-radius: 10px;
+        color: white;
+        margin: 0.5rem 0;
     }
-
-    /* Make tab headers glassy and text readable */
+    
+    .success-box {
+        background: linear-gradient(90deg, #11998e, #38ef7d);
+        padding: 1rem;
+        border-radius: 10px;
+        color: white;
+        margin: 1rem 0;
+    }
+    
+    .info-box {
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        padding: 1rem;
+        border-radius: 10px;
+        color: white;
+        margin: 1rem 0;
+    }
+    
+    .warning-box {
+        background: linear-gradient(90deg, #ff9a9e, #fecfef);
+        padding: 1rem;
+        border-radius: 10px;
+        color: #333;
+        margin: 1rem 0;
+    }
+    
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 2px;
+    }
+    
     .stTabs [data-baseweb="tab"] {
-        background: rgba(255,255,255,0.22) !important;
-        color: #222 !important;
-        font-weight: bold;
+        height: 50px;
+        background: linear-gradient(45deg, #667eea, #764ba2);
         border-radius: 10px;
-        box-shadow: 0 2px 8px rgba(76,205,196,0.10);
-        backdrop-filter: blur(8px);
+        color: white;
+        font-weight: bold;
     }
+    
     .stTabs [aria-selected="true"] {
-        background: rgba(76,205,196,0.25) !important;
-        color: #222 !important;
-    }
-
-    /* Make sidebar glassy */
-    section[data-testid="stSidebar"] {
-        background: rgba(255,255,255,0.18) !important;
-        border-radius: 16px;
-        box-shadow: 0 4px 24px rgba(102,126,234,0.12);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255,255,255,0.25);
-    }
-
-    /* Make footer glassy */
-    .footer-glass {
-        background: rgba(255,255,255,0.18);
-        border-radius: 16px;
-        box-shadow: 0 4px 24px rgba(102,126,234,0.12);
-        color: #222 !important;
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255,255,255,0.25);
-        padding: 2rem;
-        margin-top: 2rem;
-    }
-
-    /* Ensure all text is clear and easy to read */
-    body, .stApp, .main-header, .metric-card, .success-box, .info-box, .warning-box, .stTabs [data-baseweb="tab"], .stTabs [aria-selected="true"] {
-        color: #222 !important;
-        text-shadow: 0 1px 2px rgba(255,255,255,0.08);
-        font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+        background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
     }
 </style>
 """, unsafe_allow_html=True)
@@ -147,7 +109,7 @@ def init_gemini():
 def count_tokens(text):
     """Count tokens in text using tiktoken"""
     try:
-        encoding = tiktoken.encoding_for_model("gemma-3n-e4b-it")
+        encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
         return len(encoding.encode(text))
     except:
         return len(text.split())
@@ -174,32 +136,209 @@ def compress_text(text, compression_ratio=0.5):
     
     return '. '.join([s[2] for s in selected_sentences])
 
-def simulate_rag_search(query, documents):
-    """Simulate RAG document retrieval"""
+class AdvancedRAG:
+    def __init__(self, model=None):
+        self.model = model
+        self.retrieval_history = []
+        
+    def hybrid_retrieval(self, query, documents, dense_weight=0.7):
+        """Hybrid retrieval combining dense and sparse methods"""
+        # Sparse retrieval (TF-IDF)
+        all_texts = [query] + documents
+        tfidf_vectors, vectorizer = create_vector_embeddings(all_texts)
+        tfidf_scores = cosine_similarity(tfidf_vectors[0:1], tfidf_vectors[1:])[0]
+        
+        # Dense retrieval (using model embeddings if available)
+        if self.model:
+            try:
+                # Get embeddings from the model
+                query_embedding = self.model.embed_content(query)['embedding']
+                doc_embeddings = [self.model.embed_content(doc)['embedding'] for doc in documents]
+                dense_scores = cosine_similarity([query_embedding], doc_embeddings)[0]
+                
+                # Combine scores
+                combined_scores = (dense_weight * np.array(dense_scores) + 
+                                 (1 - dense_weight) * tfidf_scores)
+                return combined_scores
+            except:
+                pass
+                
+        return tfidf_scores
+    
+    def query_rewrite(self, query, history=None):
+        """Rewrite query using LLM for better retrieval"""
+        if not self.model:
+            return query
+            
+        prompt = f"""Rewrite the following query to be more effective for document retrieval.
+        Consider possible synonyms, rephrasing, and expansion.
+        
+        Original Query: {query}
+        
+        Rewritten Query:"""
+        
+        try:
+            response = self.model.generate_content(prompt)
+            return response.text.strip()
+        except:
+            return query
+    
+    def rerank_documents(self, query, documents, scores, top_k=3):
+        """Rerank documents using cross-encoder style scoring"""
+        if not self.model or not documents:
+            return scores
+            
+        try:
+            # Create query-document pairs for reranking
+            pairs = [(query, doc) for doc in documents]
+            
+            # Generate relevance scores using the model
+            relevance_scores = []
+            for pair in pairs:
+                prompt = f"""Rate the relevance of the document to the query on a scale of 1-10.
+                
+                Query: {pair[0]}
+                Document: {pair[1]}
+                
+                Relevance Score (1-10):"""
+                
+                response = self.model.generate_content(prompt)
+                try:
+                    score = float(response.text.strip())
+                    relevance_scores.append(score)
+                except:
+                    relevance_scores.append(0)
+            
+            # Normalize scores and combine with original scores
+            if relevance_scores:
+                max_score = max(relevance_scores) if max(relevance_scores) > 0 else 1
+                normalized_scores = [s/max_score for s in relevance_scores]
+                # Combine with original scores (50-50)
+                combined_scores = 0.5 * np.array(scores) + 0.5 * np.array(normalized_scores)
+                return combined_scores
+                
+        except Exception as e:
+            print(f"Error in reranking: {str(e)}")
+            
+        return scores
+    
+    def contextual_compression(self, document, query, compression_ratio=0.3):
+        """Extract most relevant parts of document based on query"""
+        if not self.model:
+            return document
+            
+        try:
+            prompt = f"""Extract the most relevant parts of the following document that answer the query.
+            Keep only the essential information and remove irrelevant details.
+            
+            Query: {query}
+            
+            Document: {document}
+            
+            Relevant Extracts:"""
+            
+            response = self.model.generate_content(prompt)
+            return response.text.strip()
+        except:
+            return document
+    
+    def multi_hop_retrieval(self, query, documents, max_hops=2):
+        """Perform multi-hop retrieval to find relevant information"""
+        current_query = query
+        relevant_docs = []
+        
+        for hop in range(max_hops):
+            # Get initial results
+            scores = self.hybrid_retrieval(current_query, documents)
+            top_indices = np.argsort(scores)[-3:][::-1]
+            
+            # Get top documents
+            top_docs = [documents[i] for i in top_indices if scores[i] > 0]
+            relevant_docs.extend(top_docs)
+            
+            # Generate new query if not last hop
+            if hop < max_hops - 1 and top_docs:
+                context = "\n".join(top_docs[:2])
+                prompt = f"""Based on the following context, generate a more specific query to find additional relevant information.
+                
+                Original Query: {query}
+                Context: {context}
+                
+                New Query:"""
+                
+                try:
+                    response = self.model.generate_content(prompt)
+                    current_query = response.text.strip()
+                except:
+                    break
+        
+        return relevant_docs
+    
+    def select_few_shot_examples(self, query, examples, k=2):
+        """Dynamically select few-shot examples based on query similarity"""
+        if not examples:
+            return []
+            
+        # Calculate similarity between query and all examples
+        all_queries = [query] + [ex['question'] for ex in examples]
+        vectors, _ = create_vector_embeddings(all_queries)
+        similarities = cosine_similarity(vectors[0:1], vectors[1:])[0]
+        
+        # Get top-k most similar examples
+        top_indices = np.argsort(similarities)[-k:][::-1]
+        return [examples[i] for i in top_indices if i < len(examples)]
+
+def simulate_rag_search(query, documents, model=None):
+    """Enhanced RAG document retrieval with advanced features"""
     if not documents:
         return []
     
-    # Create embeddings for query and documents
-    all_texts = [query] + documents
-    vectors, vectorizer = create_vector_embeddings(all_texts)
+    rag = AdvancedRAG(model)
     
-    # Calculate similarities
-    query_vector = vectors[0]
-    doc_vectors = vectors[1:]
+    # 1. Query Rewriting
+    rewritten_query = rag.query_rewrite(query)
     
-    similarities = cosine_similarity(query_vector, doc_vectors)[0]
+    # 2. Multi-hop retrieval
+    relevant_docs = rag.multi_hop_retrieval(rewritten_query, documents)
     
-    # Return top 3 most similar documents
-    top_indices = np.argsort(similarities)[-3:][::-1]
+    if not relevant_docs:
+        relevant_docs = documents
+    
+    # 3. Hybrid retrieval
+    scores = rag.hybrid_retrieval(rewritten_query, relevant_docs)
+    
+    # 4. Rerank documents
+    reranked_scores = rag.rerank_documents(rewritten_query, relevant_docs, scores)
+    
+    # 5. Get top results with contextual compression
+    top_indices = np.argsort(reranked_scores)[-3:][::-1]
     results = []
     
     for idx in top_indices:
-        if similarities[idx] > 0:
+        if reranked_scores[idx] > 0:
+            # Apply contextual compression to the most relevant parts
+            compressed_doc = rag.contextual_compression(
+                relevant_docs[idx], 
+                rewritten_query
+            )
+            
             results.append({
-                'document': documents[idx],
-                'similarity': similarities[idx],
+                'document': compressed_doc,
+                'original_document': relevant_docs[idx],
+                'similarity': float(reranked_scores[idx]),
                 'index': idx
             })
+    
+    # Log the retrieval
+    rag.retrieval_history.append({
+        'query': query,
+        'rewritten_query': rewritten_query,
+        'timestamp': datetime.now().isoformat(),
+        'results': [{
+            'index': r['index'],
+            'similarity': r['similarity']
+        } for r in results]
+    })
     
     return results
 
@@ -212,27 +351,38 @@ def create_network_graph(relationships):
 
 # Main app
 def main():
-    st.markdown('<h1 class="main-header">🦄 Advanced LLM Techniques Showcase</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 class="main-header"> Advanced RAG System</h1>', unsafe_allow_html=True)
     
     # Initialize Gemini
     model = init_gemini()
+    rag = AdvancedRAG(model) if model else None
     
     if not model:
-        st.error("⚠️ Please configure your Gemini API key in Streamlit secrets")
+        st.error(" Please configure your Gemini API key in Streamlit secrets")
         return
     
     # Sidebar for global settings
     with st.sidebar:
-        st.header("🔧 Configuration")
+        st.header(" RAG Configuration")
         
-        # Global settings
+        # RAG settings
+        st.subheader("Retrieval Settings")
+        retrieval_mode = st.selectbox(
+            "Retrieval Mode",
+            ["Standard", "Multi-hop", "Hybrid"],
+            index=0
+        )
+        
+        rerank_enabled = st.checkbox("Enable Reranking", value=True)
+        compression_ratio = st.slider("Context Compression", 0.1, 1.0, 0.5)
+        
+        st.markdown("---")
+        st.subheader("Generation Settings")
         temperature = st.slider("Temperature", 0.0, 1.0, 0.7)
         max_tokens = st.slider("Max Tokens", 100, 2000, 1000)
         
         st.markdown("---")
-        
-        # Performance metrics
-        st.subheader("📊 Session Stats")
+        st.subheader(" Session Stats")
         if 'session_stats' not in st.session_state:
             st.session_state.session_stats = {
                 'total_queries': 0,
@@ -259,264 +409,107 @@ def main():
     with tab1:
         st.header("🔍 Retrieval-Augmented Generation (RAG)")
         
-        # Initialize document store with better default documents
-        if 'documents' not in st.session_state:
-            st.session_state.documents = [
-                "Machine learning is a subset of artificial intelligence that focuses on developing algorithms that can learn from data. It involves training models on large datasets to make predictions or decisions without being explicitly programmed for specific tasks.",
-                "Deep learning uses neural networks with multiple layers to process complex data patterns. These networks can automatically discover representations needed for feature detection or classification from raw data, making them particularly effective for tasks like image recognition and natural language processing.",
-                "Natural language processing (NLP) helps computers understand, interpret, and generate human language. It combines computational linguistics with machine learning to enable computers to process and analyze large amounts of natural language data.",
-                "Computer vision enables machines to interpret and understand visual information from the world. It uses digital images from cameras and videos and deep learning models to accurately identify and classify objects, and then react to what they see.",
-                "Reinforcement learning trains agents through rewards and penalties in an environment. The agent learns to make decisions by trying different actions and receiving feedback, gradually improving its performance through trial and error.",
-                "Transformer architecture revolutionized natural language processing by using attention mechanisms to process sequential data. It forms the backbone of modern language models like GPT and BERT, enabling them to understand context and relationships in text.",
-                "Large language models (LLMs) are AI systems trained on vast amounts of text data to understand and generate human-like text. They can perform various tasks including translation, summarization, question answering, and code generation."
-            ]
-        
-        # Initialize RAG metrics
-        if 'rag_metrics' not in st.session_state:
-            st.session_state.rag_metrics = {
-                'total_queries': 0,
-                'successful_retrievals': 0,
-                'avg_similarity': 0.0,
-                'response_times': []
-            }
-        
         col1, col2 = st.columns([1, 1])
         
         with col1:
             st.subheader("📚 Document Store")
             
-            # Document management
-            st.write(f"**Total Documents: {len(st.session_state.documents)}**")
-            
-            # Add new document
-            with st.expander("➕ Add New Document"):
-                new_doc = st.text_area("Enter document content:", height=100)
-                if st.button("Add Document", key="add_doc"):
-                    if new_doc and new_doc.strip():
-                        st.session_state.documents.append(new_doc.strip())
-                        st.success("✅ Document added successfully!")
-                        st.rerun()
-                    else:
-                        st.warning("Please enter valid document content.")
-            
-            # Display current documents
-            with st.expander("📋 View All Documents"):
-                for i, doc in enumerate(st.session_state.documents):
-                    st.markdown(f"""
-                    <div class="metric-card">
-                        <strong>Document {i+1}</strong><br>
-                        {doc[:150]}{'...' if len(doc) > 150 else ''}
-                    </div>
-                    """, unsafe_allow_html=True)
-            
             # Document upload
             uploaded_files = st.file_uploader(
-                "Upload text files", 
-                type=['txt'], 
-                accept_multiple_files=True,
-                key="file_upload"
+                "Upload documents", 
+                type=['txt', 'pdf', 'docx'], 
+                accept_multiple_files=True
             )
             
-            if uploaded_files:
-                for uploaded_file in uploaded_files:
-                    content = uploaded_file.read().decode('utf-8')
-                    if content not in st.session_state.documents:
-                        st.session_state.documents.append(content)
-                        st.success(f"✅ Added content from {uploaded_file.name}")
+            # Initialize document store
+            if 'documents' not in st.session_state:
+                st.session_state.documents = [
+                    "Machine learning is a subset of artificial intelligence that focuses on algorithms.",
+                    "Deep learning uses neural networks with multiple layers to process data.",
+                    "Natural language processing helps computers understand human language.",
+                    "Computer vision enables machines to interpret visual information.",
+                    "Reinforcement learning trains agents through rewards and penalties."
+                ]
+            
+            # Display current documents
+            st.write("Current Documents:")
+            for i, doc in enumerate(st.session_state.documents):
+                with st.expander(f"Document {i+1}"):
+                    st.write(doc)
+            
+            # Add new document
+            new_doc = st.text_area("Add new document:")
+            if st.button("Add Document"):
+                if new_doc:
+                    st.session_state.documents.append(new_doc)
+                    st.success("Document added!")
+                    st.rerun()
         
         with col2:
             st.subheader("❓ Query Interface")
             
-            # Sample queries for demonstration
-            sample_queries = [
-                "What is machine learning?",
-                "How does deep learning work?",
-                "Explain natural language processing",
-                "What are transformers in AI?",
-                "How does reinforcement learning train agents?"
-            ]
+            query = st.text_input("Enter your query:")
             
-            selected_query = st.selectbox("Select a sample query:", [""] + sample_queries)
-            
-            query = st.text_input("Or enter your own query:", value=selected_query if selected_query else "")
-            
-            # Advanced search options
-            with st.expander("🔧 Advanced Options"):
-                max_results = st.slider("Max results to retrieve:", 1, 5, 3)
-                similarity_threshold = st.slider("Similarity threshold:", 0.0, 1.0, 0.1)
-            
-            if st.button("🔍 Search & Generate", type="primary"):
-                if query and query.strip():
-                    start_time = time.time()
-                    
-                    with st.spinner("🔍 Searching documents..."):
-                        # Perform RAG search
+            if st.button("Search & Generate", type="primary"):
+                if query:
+                    with st.spinner("Searching documents..."):
+                        # Simulate RAG retrieval
                         results = simulate_rag_search(query, st.session_state.documents)
                         
-                        # Filter by similarity threshold
-                        filtered_results = [r for r in results if r['similarity'] >= similarity_threshold]
-                        filtered_results = filtered_results[:max_results]
-                        
-                        if filtered_results:
+                        if results:
                             st.subheader("🎯 Retrieved Documents")
-                            
-                            total_similarity = 0
-                            for i, result in enumerate(filtered_results):
-                                total_similarity += result['similarity']
-                                
-                                # Create expandable result
-                                with st.expander(f"📄 Document {result['index']+1} (Similarity: {result['similarity']:.3f})"):
-                                    st.markdown(f"""
-                                    <div class="info-box">
-                                        <strong>Relevance Score:</strong> {result['similarity']:.3f}<br>
-                                        <strong>Content:</strong><br>
-                                        {result['document']}
-                                    </div>
-                                    """, unsafe_allow_html=True)
+                            for i, result in enumerate(results):
+                                st.markdown(f"""
+                                <div class="info-box">
+                                    <strong>Document {result['index']+1}</strong> 
+                                    (Similarity: {result['similarity']:.3f})<br>
+                                    {result['document']}
+                                </div>
+                                """, unsafe_allow_html=True)
                             
                             # Generate response using Gemini
-                            with st.spinner("✨ Generating response..."):
-                                context = "\n\n".join([f"Document {r['index']+1}: {r['document']}" for r in filtered_results])
-                                
-                                prompt = f"""
-You are an AI assistant with access to a knowledge base. Based on the retrieved documents below, provide a comprehensive and accurate answer to the user's question.
-
-Retrieved Documents:
-{context}
-
-User Question: {query}
-
-Instructions:
-1. Use only the information from the retrieved documents
-2. If the documents don't contain enough information, clearly state this
-3. Provide a detailed and well-structured answer
-4. Reference specific documents when relevant
-5. If multiple documents contain relevant information, synthesize them coherently
-
-Answer:"""
-                                
-                                try:
-                                    response = model.generate_content(prompt)
-                                    
-                                    end_time = time.time()
-                                    response_time = end_time - start_time
-                                    
-                                    # Update metrics
-                                    st.session_state.rag_metrics['total_queries'] += 1
-                                    st.session_state.rag_metrics['successful_retrievals'] += 1
-                                    st.session_state.rag_metrics['avg_similarity'] = total_similarity / len(filtered_results)
-                                    st.session_state.rag_metrics['response_times'].append(response_time)
-                                    
-                                    st.subheader("✨ AI Generated Response")
-                                    st.markdown(f'<div class="success-box">{response.text}</div>', unsafe_allow_html=True)
-                                    
-                                    # Show response metrics
-                                    col_a, col_b, col_c = st.columns(3)
-                                    with col_a:
-                                        st.metric("📊 Documents Retrieved", len(filtered_results))
-                                    with col_b:
-                                        st.metric("⚡ Response Time", f"{response_time:.2f}s")
-                                    with col_c:
-                                        st.metric("🎯 Avg Similarity", f"{total_similarity/len(filtered_results):.3f}")
-                                    
-                                except Exception as e:
-                                    st.error(f"❌ Error generating response: {str(e)}")
-                                    st.info("💡 Please check your Gemini API key configuration in Streamlit secrets.")
-                        else:
-                            st.warning("⚠️ No relevant documents found matching your query and similarity threshold!")
-                            st.info("💡 Try lowering the similarity threshold or adding more relevant documents.")
+                            context = "\n".join([r['document'] for r in results])
+                            prompt = f"""
+                            Based on the following context, answer the query:
                             
-                            # Update metrics for failed retrieval
-                            st.session_state.rag_metrics['total_queries'] += 1
-                else:
-                    st.warning("Please enter a query to search.")
+                            Context: {context}
+                            
+                            Query: {query}
+                            
+                            Please provide a comprehensive answer based on the context.
+                            """
+                            
+                            try:
+                                response = model.generate_content(prompt)
+                                st.subheader("✨ Generated Response")
+                                st.markdown(f'<div class="success-box">{response.text}</div>', unsafe_allow_html=True)
+                            except Exception as e:
+                                st.error(f"Error generating response: {str(e)}")
+                        else:
+                            st.warning("No relevant documents found!")
         
         # RAG Performance Visualization
-        st.subheader("📈 RAG System Performance")
+        st.subheader("📈 RAG Performance Metrics")
         
-        # Current session metrics
-        metrics = st.session_state.rag_metrics
-        
-        col1, col2, col3, col4 = st.columns(4)
-        
-        with col1:
-            st.metric("🔍 Total Queries", metrics['total_queries'])
-        
-        with col2:
-            success_rate = (metrics['successful_retrievals'] / max(metrics['total_queries'], 1)) * 100
-            st.metric("✅ Success Rate", f"{success_rate:.1f}%")
-        
-        with col3:
-            avg_similarity = metrics['avg_similarity']
-            st.metric("🎯 Avg Similarity", f"{avg_similarity:.3f}")
-        
-        with col4:
-            avg_response_time = np.mean(metrics['response_times']) if metrics['response_times'] else 0
-            st.metric("⚡ Avg Response Time", f"{avg_response_time:.2f}s")
-        
-        # Performance charts
-        if metrics['response_times']:
-            col1, col2 = st.columns(2)
-            
-            with col1:
-                # Response time trend
-                fig = px.line(
-                    x=list(range(1, len(metrics['response_times']) + 1)),
-                    y=metrics['response_times'],
-                    title="Response Time Trend",
-                    labels={'x': 'Query Number', 'y': 'Response Time (s)'}
-                )
-                fig.update_traces(line_color='#4ECDC4')
-                fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
-                st.plotly_chart(fig, use_container_width=True)
-            
-            with col2:
-                # Response time distribution
-                fig = px.histogram(
-                    x=metrics['response_times'],
-                    title="Response Time Distribution",
-                    labels={'x': 'Response Time (s)', 'y': 'Frequency'}
-                )
-                fig.update_traces(marker_color='#FF6B6B')
-                fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
-                st.plotly_chart(fig, use_container_width=True)
-        
-        # RAG Pipeline Visualization
-        st.subheader("🔄 RAG Pipeline Process")
-        
-        pipeline_steps = [
-            {"step": "1️⃣ Query Processing", "description": "Analyze and preprocess user query"},
-            {"step": "2️⃣ Document Retrieval", "description": "Find relevant documents using similarity search"},
-            {"step": "3️⃣ Context Preparation", "description": "Prepare retrieved documents as context"},
-            {"step": "4️⃣ LLM Generation", "description": "Generate response using retrieved context"},
-            {"step": "5️⃣ Response Delivery", "description": "Return final answer to user"}
-        ]
-        
-        for step_info in pipeline_steps:
-            st.markdown(f"""
-            <div class="metric-card">
-                <strong>{step_info['step']}</strong><br>
-                {step_info['description']}
-            </div>
-            """, unsafe_allow_html=True)
-        
-        # RAG vs Standard LLM Comparison
-        st.subheader("⚔️ RAG vs Standard LLM Comparison")
-        
-        comparison_data = {
-            'Metric': ['Accuracy', 'Relevance', 'Factual Consistency', 'Context Awareness', 'Hallucination Rate'],
-            'RAG System': [0.92, 0.94, 0.89, 0.96, 0.12],
-            'Standard LLM': [0.78, 0.82, 0.74, 0.71, 0.35]
+        # Simulate performance data
+        rag_metrics = {
+            'Retrieval Precision': [0.85, 0.78, 0.92, 0.88, 0.94],
+            'Response Quality': [0.87, 0.82, 0.89, 0.91, 0.86],
+            'Retrieval Time (ms)': [45, 52, 38, 41, 47],
+            'Generation Time (ms)': [1200, 1350, 1180, 1280, 1220]
         }
         
-        fig = px.bar(
-            comparison_data, 
-            x='Metric', 
-            y=['RAG System', 'Standard LLM'],
-            title="Performance Comparison: RAG vs Standard LLM",
-            barmode='group'
+        fig = make_subplots(
+            rows=2, cols=2,
+            subplot_titles=('Retrieval Precision', 'Response Quality', 'Retrieval Time', 'Generation Time')
         )
-        fig.update_layout(height=400, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+        
+        fig.add_trace(go.Scatter(y=rag_metrics['Retrieval Precision'], mode='lines+markers'), row=1, col=1)
+        fig.add_trace(go.Scatter(y=rag_metrics['Response Quality'], mode='lines+markers'), row=1, col=2)
+        fig.add_trace(go.Scatter(y=rag_metrics['Retrieval Time (ms)'], mode='lines+markers'), row=2, col=1)
+        fig.add_trace(go.Scatter(y=rag_metrics['Generation Time (ms)'], mode='lines+markers'), row=2, col=2)
+        
+        fig.update_layout(height=500, showlegend=False)
         st.plotly_chart(fig, use_container_width=True)
     
     # Tab 2: Vectorized Memory
@@ -624,9 +617,8 @@ Answer:"""
             # Memory growth chart
             if total_memories > 0:
                 memory_growth = list(range(1, total_memories + 1))
-                fig = px.line(x=list(range(len(memory_growth))), y=memory_growth,
+                fig = px.line(x=list(range(len(memory_growth))), y=memory_growth, 
                              title="Memory Growth Over Time")
-                fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
                 st.plotly_chart(fig, use_container_width=True)
     
     # Tab 3: Text Compression
@@ -696,9 +688,8 @@ Answer:"""
                     'Tokens': [result['original_tokens'], result['compressed_tokens']]
                 }
                 
-                fig = px.bar(savings_data, x='Type', y='Tokens',
+                fig = px.bar(savings_data, x='Type', y='Tokens', 
                            title="Token Savings Visualization")
-                fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
                 st.plotly_chart(fig, use_container_width=True)
         
         # Compression techniques comparison
@@ -716,7 +707,6 @@ Answer:"""
         fig = px.scatter(df, x='Compression Ratio', y='Quality Score', 
                         size='Speed (ms)', hover_name='Technique',
                         title="Compression Techniques Performance")
-        fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
         st.plotly_chart(fig, use_container_width=True)
     
     # Tab 4: Codebase Analysis
@@ -801,9 +791,8 @@ class DataProcessor:
                              (analysis['comment_lines'] / analysis['total_lines']) * 10]
                 }
                 
-                fig = px.bar(complexity_data, x='Metric', y='Score',
+                fig = px.bar(complexity_data, x='Metric', y='Score', 
                            title="Code Quality Metrics")
-                fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
                 st.plotly_chart(fig, use_container_width=True)
                 
                 # Generate insights with Gemini
@@ -897,24 +886,24 @@ class DataProcessor:
                 )
                 
                 fig.add_trace(
-                    go.Scatter(x=progress['epochs'], y=progress['train_loss'],
+                    go.Scatter(x=progress['epochs'], y=progress['train_loss'], 
                              name='Training Loss', line=dict(color='blue')),
                     row=1, col=1
                 )
                 
                 fig.add_trace(
-                    go.Scatter(x=progress['epochs'], y=progress['val_loss'],
+                    go.Scatter(x=progress['epochs'], y=progress['val_loss'], 
                              name='Validation Loss', line=dict(color='red')),
                     row=1, col=1
                 )
                 
                 fig.add_trace(
-                    go.Scatter(x=progress['epochs'], y=progress['accuracy'],
+                    go.Scatter(x=progress['epochs'], y=progress['accuracy'], 
                              name='Accuracy', line=dict(color='green')),
                     row=2, col=1
                 )
                 
-                fig.update_layout(height=500, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+                fig.update_layout(height=500)
                 st.plotly_chart(fig, use_container_width=True)
                 
                 # Final metrics
@@ -946,7 +935,6 @@ class DataProcessor:
         fig = px.scatter(df_techniques, x='Memory Usage (GB)', y='Performance Score', 
                         size='Training Time (hours)', hover_name='Technique',
                         title="Fine-tuning Techniques Comparison")
-        fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
         st.plotly_chart(fig, use_container_width=True)
         
         # Fine-tuning process flow
@@ -979,7 +967,7 @@ class DataProcessor:
         col1, col2, col3, col4 = st.columns(4)
         
         with col1:
-            st.metric("🦄 Active Models", "5", delta="2")
+            st.metric("🚀 Active Models", "5", delta="2")
         
         with col2:
             st.metric("⚡ Avg Latency", "245ms", delta="-12ms")
@@ -1006,9 +994,8 @@ class DataProcessor:
                 'Response Time (ms)': response_times
             })
             
-            fig = px.line(df_response, x='Date', y='Response Time (ms)',
+            fig = px.line(df_response, x='Date', y='Response Time (ms)', 
                          title="Daily Response Time Trends")
-            fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
             st.plotly_chart(fig, use_container_width=True)
         
         with col2:
@@ -1020,9 +1007,8 @@ class DataProcessor:
                 'Accuracy': accuracy_data
             })
             
-            fig = px.line(df_accuracy, x='Date', y='Accuracy',
+            fig = px.line(df_accuracy, x='Date', y='Accuracy', 
                          title="Model Accuracy Trends")
-            fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
             st.plotly_chart(fig, use_container_width=True)
         
         # System resource usage
@@ -1043,10 +1029,9 @@ class DataProcessor:
         
         fig = px.line(resource_df, x='Hour', y=['CPU Usage (%)', 'Memory Usage (%)', 'GPU Usage (%)'],
                      title="24-Hour Resource Usage")
-        fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
         st.plotly_chart(fig, use_container_width=True)
-    
-    # Model comparison matrix
+        
+        # Model comparison matrix
         st.subheader("🔍 Model Performance Comparison")
         
         models_data = {
@@ -1065,7 +1050,6 @@ class DataProcessor:
             aspect="auto",
             title="Model Performance Heatmap"
         )
-        fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
         st.plotly_chart(fig, use_container_width=True)
         
         # A/B Testing Results
@@ -1080,9 +1064,8 @@ class DataProcessor:
         
         df_ab = pd.DataFrame(ab_test_data)
         
-        fig = px.bar(df_ab, x='Test', y=['Variant A', 'Variant B'],
+        fig = px.bar(df_ab, x='Test', y=['Variant A', 'Variant B'], 
                     title="A/B Test Results Comparison", barmode='group')
-        fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
         st.plotly_chart(fig, use_container_width=True)
         
         # Live model monitoring
@@ -1133,7 +1116,7 @@ class DataProcessor:
         st.subheader("💡 Performance Insights")
         
         insights = [
-            "🦄 RAG system shows 23% improvement in response relevance",
+            "🚀 RAG system shows 23% improvement in response relevance",
             "⚡ Text compression reduces token usage by 45% while maintaining 94% quality",
             "🧠 Vectorized memory improves context retention by 67%",
             "🎯 Fine-tuned model outperforms base model by 18% on domain-specific tasks",
@@ -1150,8 +1133,8 @@ class DataProcessor:
     # Footer with additional info
     st.markdown("---")
     st.markdown("""
-    <div class="footer-glass" style="text-align: center;">
-        <h3>🦄 Advanced LLM Techniques Showcase</h3>
+    <div style="text-align: center; padding: 2rem; background: linear-gradient(45deg, #667eea, #764ba2); color: white; border-radius: 10px; margin-top: 2rem;">
+        <h3>🚀 Advanced LLM Techniques Showcase</h3>
         <p>This application demonstrates cutting-edge techniques in Large Language Model optimization and deployment.</p>
         <p><strong>Built with:</strong> Streamlit • Gemini API • Advanced ML Techniques</p>
     </div>
