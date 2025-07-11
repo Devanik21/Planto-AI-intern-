@@ -26,7 +26,7 @@ import hashlib
 # Page configuration
 st.set_page_config(
     page_title="Advanced LLM Techniques Showcase",
-    page_icon="✨",
+    page_icon="🚀",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -109,7 +109,7 @@ def init_gemini():
 def count_tokens(text):
     """Count tokens in text using tiktoken"""
     try:
-        encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
+        encoding = tiktoken.encoding_for_model("gemma-3n-e4b-it")
         return len(encoding.encode(text))
     except:
         return len(text.split())
@@ -174,7 +174,7 @@ def create_network_graph(relationships):
 
 # Main app
 def main():
-    st.markdown('<h1 class="main-header">🦄 Advanced LLM Techniques Showcase</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 class="main-header">🚀 Advanced LLM Techniques Showcase</h1>', unsafe_allow_html=True)
     
     # Initialize Gemini
     model = init_gemini()
@@ -221,107 +221,262 @@ def main():
     with tab1:
         st.header("🔍 Retrieval-Augmented Generation (RAG)")
         
+        # Initialize document store with better default documents
+        if 'documents' not in st.session_state:
+            st.session_state.documents = [
+                "Machine learning is a subset of artificial intelligence that focuses on developing algorithms that can learn from data. It involves training models on large datasets to make predictions or decisions without being explicitly programmed for specific tasks.",
+                "Deep learning uses neural networks with multiple layers to process complex data patterns. These networks can automatically discover representations needed for feature detection or classification from raw data, making them particularly effective for tasks like image recognition and natural language processing.",
+                "Natural language processing (NLP) helps computers understand, interpret, and generate human language. It combines computational linguistics with machine learning to enable computers to process and analyze large amounts of natural language data.",
+                "Computer vision enables machines to interpret and understand visual information from the world. It uses digital images from cameras and videos and deep learning models to accurately identify and classify objects, and then react to what they see.",
+                "Reinforcement learning trains agents through rewards and penalties in an environment. The agent learns to make decisions by trying different actions and receiving feedback, gradually improving its performance through trial and error.",
+                "Transformer architecture revolutionized natural language processing by using attention mechanisms to process sequential data. It forms the backbone of modern language models like GPT and BERT, enabling them to understand context and relationships in text.",
+                "Large language models (LLMs) are AI systems trained on vast amounts of text data to understand and generate human-like text. They can perform various tasks including translation, summarization, question answering, and code generation."
+            ]
+        
+        # Initialize RAG metrics
+        if 'rag_metrics' not in st.session_state:
+            st.session_state.rag_metrics = {
+                'total_queries': 0,
+                'successful_retrievals': 0,
+                'avg_similarity': 0.0,
+                'response_times': []
+            }
+        
         col1, col2 = st.columns([1, 1])
         
         with col1:
             st.subheader("📚 Document Store")
             
-            # Document upload
-            uploaded_files = st.file_uploader(
-                "Upload documents", 
-                type=['txt', 'pdf', 'docx'], 
-                accept_multiple_files=True
-            )
-            
-            # Initialize document store
-            if 'documents' not in st.session_state:
-                st.session_state.documents = [
-                    "Machine learning is a subset of artificial intelligence that focuses on algorithms.",
-                    "Deep learning uses neural networks with multiple layers to process data.",
-                    "Natural language processing helps computers understand human language.",
-                    "Computer vision enables machines to interpret visual information.",
-                    "Reinforcement learning trains agents through rewards and penalties."
-                ]
-            
-            # Display current documents
-            st.write("Current Documents:")
-            for i, doc in enumerate(st.session_state.documents):
-                with st.expander(f"Document {i+1}"):
-                    st.write(doc)
+            # Document management
+            st.write(f"**Total Documents: {len(st.session_state.documents)}**")
             
             # Add new document
-            new_doc = st.text_area("Add new document:")
-            if st.button("Add Document"):
-                if new_doc:
-                    st.session_state.documents.append(new_doc)
-                    st.success("Document added!")
-                    st.rerun()
+            with st.expander("➕ Add New Document"):
+                new_doc = st.text_area("Enter document content:", height=100)
+                if st.button("Add Document", key="add_doc"):
+                    if new_doc and new_doc.strip():
+                        st.session_state.documents.append(new_doc.strip())
+                        st.success("✅ Document added successfully!")
+                        st.rerun()
+                    else:
+                        st.warning("Please enter valid document content.")
+            
+            # Display current documents
+            with st.expander("📋 View All Documents"):
+                for i, doc in enumerate(st.session_state.documents):
+                    st.markdown(f"""
+                    <div class="metric-card">
+                        <strong>Document {i+1}</strong><br>
+                        {doc[:150]}{'...' if len(doc) > 150 else ''}
+                    </div>
+                    """, unsafe_allow_html=True)
+            
+            # Document upload
+            uploaded_files = st.file_uploader(
+                "Upload text files", 
+                type=['txt'], 
+                accept_multiple_files=True,
+                key="file_upload"
+            )
+            
+            if uploaded_files:
+                for uploaded_file in uploaded_files:
+                    content = uploaded_file.read().decode('utf-8')
+                    if content not in st.session_state.documents:
+                        st.session_state.documents.append(content)
+                        st.success(f"✅ Added content from {uploaded_file.name}")
         
         with col2:
             st.subheader("❓ Query Interface")
             
-            query = st.text_input("Enter your query:")
+            # Sample queries for demonstration
+            sample_queries = [
+                "What is machine learning?",
+                "How does deep learning work?",
+                "Explain natural language processing",
+                "What are transformers in AI?",
+                "How does reinforcement learning train agents?"
+            ]
             
-            if st.button("Search & Generate", type="primary"):
-                if query:
-                    with st.spinner("Searching documents..."):
-                        # Simulate RAG retrieval
+            selected_query = st.selectbox("Select a sample query:", [""] + sample_queries)
+            
+            query = st.text_input("Or enter your own query:", value=selected_query if selected_query else "")
+            
+            # Advanced search options
+            with st.expander("🔧 Advanced Options"):
+                max_results = st.slider("Max results to retrieve:", 1, 5, 3)
+                similarity_threshold = st.slider("Similarity threshold:", 0.0, 1.0, 0.1)
+            
+            if st.button("🔍 Search & Generate", type="primary"):
+                if query and query.strip():
+                    start_time = time.time()
+                    
+                    with st.spinner("🔍 Searching documents..."):
+                        # Perform RAG search
                         results = simulate_rag_search(query, st.session_state.documents)
                         
-                        if results:
+                        # Filter by similarity threshold
+                        filtered_results = [r for r in results if r['similarity'] >= similarity_threshold]
+                        filtered_results = filtered_results[:max_results]
+                        
+                        if filtered_results:
                             st.subheader("🎯 Retrieved Documents")
-                            for i, result in enumerate(results):
-                                st.markdown(f"""
-                                <div class="info-box">
-                                    <strong>Document {result['index']+1}</strong> 
-                                    (Similarity: {result['similarity']:.3f})<br>
-                                    {result['document']}
-                                </div>
-                                """, unsafe_allow_html=True)
+                            
+                            total_similarity = 0
+                            for i, result in enumerate(filtered_results):
+                                total_similarity += result['similarity']
+                                
+                                # Create expandable result
+                                with st.expander(f"📄 Document {result['index']+1} (Similarity: {result['similarity']:.3f})"):
+                                    st.markdown(f"""
+                                    <div class="info-box">
+                                        <strong>Relevance Score:</strong> {result['similarity']:.3f}<br>
+                                        <strong>Content:</strong><br>
+                                        {result['document']}
+                                    </div>
+                                    """, unsafe_allow_html=True)
                             
                             # Generate response using Gemini
-                            context = "\n".join([r['document'] for r in results])
-                            prompt = f"""
-                            Based on the following context, answer the query:
-                            
-                            Context: {context}
-                            
-                            Query: {query}
-                            
-                            Please provide a comprehensive answer based on the context.
-                            """
-                            
-                            try:
-                                response = model.generate_content(prompt)
-                                st.subheader("✨ Generated Response")
-                                st.markdown(f'<div class="success-box">{response.text}</div>', unsafe_allow_html=True)
-                            except Exception as e:
-                                st.error(f"Error generating response: {str(e)}")
+                            with st.spinner("🤖 Generating response..."):
+                                context = "\n\n".join([f"Document {r['index']+1}: {r['document']}" for r in filtered_results])
+                                
+                                prompt = f"""
+You are an AI assistant with access to a knowledge base. Based on the retrieved documents below, provide a comprehensive and accurate answer to the user's question.
+
+Retrieved Documents:
+{context}
+
+User Question: {query}
+
+Instructions:
+1. Use only the information from the retrieved documents
+2. If the documents don't contain enough information, clearly state this
+3. Provide a detailed and well-structured answer
+4. Reference specific documents when relevant
+5. If multiple documents contain relevant information, synthesize them coherently
+
+Answer:"""
+                                
+                                try:
+                                    response = model.generate_content(prompt)
+                                    
+                                    end_time = time.time()
+                                    response_time = end_time - start_time
+                                    
+                                    # Update metrics
+                                    st.session_state.rag_metrics['total_queries'] += 1
+                                    st.session_state.rag_metrics['successful_retrievals'] += 1
+                                    st.session_state.rag_metrics['avg_similarity'] = total_similarity / len(filtered_results)
+                                    st.session_state.rag_metrics['response_times'].append(response_time)
+                                    
+                                    st.subheader("🤖 AI Generated Response")
+                                    st.markdown(f'<div class="success-box">{response.text}</div>', unsafe_allow_html=True)
+                                    
+                                    # Show response metrics
+                                    col_a, col_b, col_c = st.columns(3)
+                                    with col_a:
+                                        st.metric("📊 Documents Retrieved", len(filtered_results))
+                                    with col_b:
+                                        st.metric("⚡ Response Time", f"{response_time:.2f}s")
+                                    with col_c:
+                                        st.metric("🎯 Avg Similarity", f"{total_similarity/len(filtered_results):.3f}")
+                                    
+                                except Exception as e:
+                                    st.error(f"❌ Error generating response: {str(e)}")
+                                    st.info("💡 Please check your Gemini API key configuration in Streamlit secrets.")
                         else:
-                            st.warning("No relevant documents found!")
+                            st.warning("⚠️ No relevant documents found matching your query and similarity threshold!")
+                            st.info("💡 Try lowering the similarity threshold or adding more relevant documents.")
+                            
+                            # Update metrics for failed retrieval
+                            st.session_state.rag_metrics['total_queries'] += 1
+                else:
+                    st.warning("Please enter a query to search.")
         
         # RAG Performance Visualization
-        st.subheader("📈 RAG Performance Metrics")
+        st.subheader("📈 RAG System Performance")
         
-        # Simulate performance data
-        rag_metrics = {
-            'Retrieval Precision': [0.85, 0.78, 0.92, 0.88, 0.94],
-            'Response Quality': [0.87, 0.82, 0.89, 0.91, 0.86],
-            'Retrieval Time (ms)': [45, 52, 38, 41, 47],
-            'Generation Time (ms)': [1200, 1350, 1180, 1280, 1220]
+        # Current session metrics
+        metrics = st.session_state.rag_metrics
+        
+        col1, col2, col3, col4 = st.columns(4)
+        
+        with col1:
+            st.metric("🔍 Total Queries", metrics['total_queries'])
+        
+        with col2:
+            success_rate = (metrics['successful_retrievals'] / max(metrics['total_queries'], 1)) * 100
+            st.metric("✅ Success Rate", f"{success_rate:.1f}%")
+        
+        with col3:
+            avg_similarity = metrics['avg_similarity']
+            st.metric("🎯 Avg Similarity", f"{avg_similarity:.3f}")
+        
+        with col4:
+            avg_response_time = np.mean(metrics['response_times']) if metrics['response_times'] else 0
+            st.metric("⚡ Avg Response Time", f"{avg_response_time:.2f}s")
+        
+        # Performance charts
+        if metrics['response_times']:
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                # Response time trend
+                fig = px.line(
+                    x=list(range(1, len(metrics['response_times']) + 1)),
+                    y=metrics['response_times'],
+                    title="Response Time Trend",
+                    labels={'x': 'Query Number', 'y': 'Response Time (s)'}
+                )
+                fig.update_traces(line_color='#4ECDC4')
+                st.plotly_chart(fig, use_container_width=True)
+            
+            with col2:
+                # Response time distribution
+                fig = px.histogram(
+                    x=metrics['response_times'],
+                    title="Response Time Distribution",
+                    labels={'x': 'Response Time (s)', 'y': 'Frequency'}
+                )
+                fig.update_traces(marker_color='#FF6B6B')
+                st.plotly_chart(fig, use_container_width=True)
+        
+        # RAG Pipeline Visualization
+        st.subheader("🔄 RAG Pipeline Process")
+        
+        pipeline_steps = [
+            {"step": "1️⃣ Query Processing", "description": "Analyze and preprocess user query"},
+            {"step": "2️⃣ Document Retrieval", "description": "Find relevant documents using similarity search"},
+            {"step": "3️⃣ Context Preparation", "description": "Prepare retrieved documents as context"},
+            {"step": "4️⃣ LLM Generation", "description": "Generate response using retrieved context"},
+            {"step": "5️⃣ Response Delivery", "description": "Return final answer to user"}
+        ]
+        
+        for step_info in pipeline_steps:
+            st.markdown(f"""
+            <div class="metric-card">
+                <strong>{step_info['step']}</strong><br>
+                {step_info['description']}
+            </div>
+            """, unsafe_allow_html=True)
+        
+        # RAG vs Standard LLM Comparison
+        st.subheader("⚔️ RAG vs Standard LLM Comparison")
+        
+        comparison_data = {
+            'Metric': ['Accuracy', 'Relevance', 'Factual Consistency', 'Context Awareness', 'Hallucination Rate'],
+            'RAG System': [0.92, 0.94, 0.89, 0.96, 0.12],
+            'Standard LLM': [0.78, 0.82, 0.74, 0.71, 0.35]
         }
         
-        fig = make_subplots(
-            rows=2, cols=2,
-            subplot_titles=('Retrieval Precision', 'Response Quality', 'Retrieval Time', 'Generation Time')
+        fig = px.bar(
+            comparison_data, 
+            x='Metric', 
+            y=['RAG System', 'Standard LLM'],
+            title="Performance Comparison: RAG vs Standard LLM",
+            barmode='group'
         )
-        
-        fig.add_trace(go.Scatter(y=rag_metrics['Retrieval Precision'], mode='lines+markers'), row=1, col=1)
-        fig.add_trace(go.Scatter(y=rag_metrics['Response Quality'], mode='lines+markers'), row=1, col=2)
-        fig.add_trace(go.Scatter(y=rag_metrics['Retrieval Time (ms)'], mode='lines+markers'), row=2, col=1)
-        fig.add_trace(go.Scatter(y=rag_metrics['Generation Time (ms)'], mode='lines+markers'), row=2, col=2)
-        
-        fig.update_layout(height=500, showlegend=False)
+        fig.update_layout(height=400)
         st.plotly_chart(fig, use_container_width=True)
     
     # Tab 2: Vectorized Memory
@@ -626,7 +781,7 @@ class DataProcessor:
                     
                     try:
                         response = model.generate_content(prompt)
-                        st.subheader("✨ AI Code Insights")
+                        st.subheader("🤖 AI Code Insights")
                         st.markdown(f'<div class="info-box">{response.text}</div>', 
                                    unsafe_allow_html=True)
                     except Exception as e:
