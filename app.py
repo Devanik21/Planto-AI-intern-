@@ -221,9 +221,17 @@ def main():
     with tab1:
         st.header("🔍 Retrieval-Augmented Generation (RAG)")
         
-        # Initialize document store (no preloaded docs)
+        # Initialize document store with better default documents
         if 'documents' not in st.session_state:
-            st.session_state.documents = []
+            st.session_state.documents = [
+                "Machine learning is a subset of artificial intelligence that focuses on developing algorithms that can learn from data. It involves training models on large datasets to make predictions or decisions without being explicitly programmed for specific tasks.",
+                "Deep learning uses neural networks with multiple layers to process complex data patterns. These networks can automatically discover representations needed for feature detection or classification from raw data, making them particularly effective for tasks like image recognition and natural language processing.",
+                "Natural language processing (NLP) helps computers understand, interpret, and generate human language. It combines computational linguistics with machine learning to enable computers to process and analyze large amounts of natural language data.",
+                "Computer vision enables machines to interpret and understand visual information from the world. It uses digital images from cameras and videos and deep learning models to accurately identify and classify objects, and then react to what they see.",
+                "Reinforcement learning trains agents through rewards and penalties in an environment. The agent learns to make decisions by trying different actions and receiving feedback, gradually improving its performance through trial and error.",
+                "Transformer architecture revolutionized natural language processing by using attention mechanisms to process sequential data. It forms the backbone of modern language models like GPT and BERT, enabling them to understand context and relationships in text.",
+                "Large language models (LLMs) are AI systems trained on vast amounts of text data to understand and generate human-like text. They can perform various tasks including translation, summarization, question answering, and code generation."
+            ]
         
         # Initialize RAG metrics
         if 'rag_metrics' not in st.session_state:
@@ -239,6 +247,7 @@ def main():
         with col1:
             st.subheader("📚 Document Store")
             
+            # Document management
             st.write(f"**Total Documents: {len(st.session_state.documents)}**")
             
             # Add new document
@@ -253,17 +262,14 @@ def main():
                         st.warning("Please enter valid document content.")
             
             # Display current documents
-            if st.session_state.documents:
-                with st.expander("📋 View All Documents"):
-                    for i, doc in enumerate(st.session_state.documents):
-                        st.markdown(f"""
-                        <div class="metric-card">
-                            <strong>Document {i+1}</strong><br>
-                            {doc[:150]}{'...' if len(doc) > 150 else ''}
-                        </div>
-                        """, unsafe_allow_html=True)
-            else:
-                st.info("No documents available. Please add or upload documents to use RAG.")
+            with st.expander("📋 View All Documents"):
+                for i, doc in enumerate(st.session_state.documents):
+                    st.markdown(f"""
+                    <div class="metric-card">
+                        <strong>Document {i+1}</strong><br>
+                        {doc[:150]}{'...' if len(doc) > 150 else ''}
+                    </div>
+                    """, unsafe_allow_html=True)
             
             # Document upload
             uploaded_files = st.file_uploader(
@@ -302,9 +308,7 @@ def main():
                 similarity_threshold = st.slider("Similarity threshold:", 0.0, 1.0, 0.1)
             
             if st.button("🔍 Search & Generate", type="primary"):
-                if not st.session_state.documents:
-                    st.warning("⚠️ No documents available for retrieval. Please add or upload documents first.")
-                elif query and query.strip():
+                if query and query.strip():
                     start_time = time.time()
                     
                     with st.spinner("🔍 Searching documents..."):
@@ -575,10 +579,6 @@ Answer:"""
                     fig, ax = plt.subplots(figsize=(10, 5))
                     ax.imshow(wordcloud, interpolation='bilinear')
                     ax.axis('off')
-                    st.pyplot(fig)
-            
-            # Memory growth chart
-            if total_memories > 0:
                     st.pyplot(fig)
             
             # Memory growth chart
