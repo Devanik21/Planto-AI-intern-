@@ -34,62 +34,69 @@ st.set_page_config(
 # Custom CSS for better UI
 st.markdown("""
 <style>
-    .main-header {
-        font-size: 3rem;
-        font-weight: bold;
-        text-align: center;
-        background: linear-gradient(45deg, #FF6B6B, #4ECDC4, #45B7D1);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 2rem;
+    /* Glassy background for the whole app */
+    .stApp {
+        background: linear-gradient(135deg, rgba(102,126,234,0.25) 0%, rgba(76,205,196,0.18) 100%);
+        backdrop-filter: blur(8px);
+        min-height: 100vh;
     }
-    
-    .metric-card {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 1rem;
-        border-radius: 10px;
-        color: white;
-        margin: 0.5rem 0;
+
+    /* Remove default grey/black backgrounds from Streamlit containers */
+    .block-container, .main, .stTabs, .stTabs [data-baseweb="tab-list"], .stTabs [data-baseweb="tab"] {
+        background: transparent !important;
+        box-shadow: none !important;
     }
-    
-    .success-box {
-        background: linear-gradient(90deg, #11998e, #38ef7d);
-        padding: 1rem;
-        border-radius: 10px;
-        color: white;
-        margin: 1rem 0;
+
+    /* Glassy card style for all custom boxes */
+    .metric-card, .success-box, .info-box, .warning-box {
+        background: rgba(255,255,255,0.18);
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(102,126,234,0.12);
+        color: #222 !important;
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255,255,255,0.25);
     }
-    
-    .info-box {
-        background: linear-gradient(90deg, #667eea, #764ba2);
-        padding: 1rem;
-        border-radius: 10px;
-        color: white;
-        margin: 1rem 0;
-    }
-    
-    .warning-box {
-        background: linear-gradient(90deg, #ff9a9e, #fecfef);
-        padding: 1rem;
-        border-radius: 10px;
-        color: #333;
-        margin: 1rem 0;
-    }
-    
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 2px;
-    }
-    
+
+    /* Make tab headers glassy and text readable */
     .stTabs [data-baseweb="tab"] {
-        height: 50px;
-        background: linear-gradient(45deg, #667eea, #764ba2);
-        border-radius: 10px;
-        color: white;
+        background: rgba(255,255,255,0.22) !important;
+        color: #222 !important;
         font-weight: bold;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(76,205,196,0.10);
+        backdrop-filter: blur(8px);
     }
-    
     .stTabs [aria-selected="true"] {
-        background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+        background: rgba(76,205,196,0.25) !important;
+        color: #222 !important;
+    }
+
+    /* Make sidebar glassy */
+    section[data-testid="stSidebar"] {
+        background: rgba(255,255,255,0.18) !important;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(102,126,234,0.12);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255,255,255,0.25);
+    }
+
+    /* Make footer glassy */
+    .footer-glass {
+        background: rgba(255,255,255,0.18);
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(102,126,234,0.12);
+        color: #222 !important;
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255,255,255,0.25);
+        padding: 2rem;
+        margin-top: 2rem;
+    }
+
+    /* Ensure all text is clear and easy to read */
+    body, .stApp, .main-header, .metric-card, .success-box, .info-box, .warning-box, .stTabs [data-baseweb="tab"], .stTabs [aria-selected="true"] {
+        color: #222 !important;
+        text-shadow: 0 1px 2px rgba(255,255,255,0.08);
+        font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -1100,7 +1107,7 @@ class DataProcessor:
     # Footer with additional info
     st.markdown("---")
     st.markdown("""
-    <div style="text-align: center; padding: 2rem; background: linear-gradient(45deg, #667eea, #764ba2); color: white; border-radius: 10px; margin-top: 2rem;">
+    <div class="footer-glass" style="text-align: center;">
         <h3>🦄 Advanced LLM Techniques Showcase</h3>
         <p>This application demonstrates cutting-edge techniques in Large Language Model optimization and deployment.</p>
         <p><strong>Built with:</strong> Streamlit • Gemini API • Advanced ML Techniques</p>
