@@ -26,7 +26,7 @@ import hashlib
 # Page configuration
 st.set_page_config(
     page_title="Advanced LLM Techniques Showcase",
-    page_icon="🚀",
+    page_icon="✨",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -293,7 +293,7 @@ def main():
                             
                             try:
                                 response = model.generate_content(prompt)
-                                st.subheader("🤖 Generated Response")
+                                st.subheader("✨ Generated Response")
                                 st.markdown(f'<div class="success-box">{response.text}</div>', unsafe_allow_html=True)
                             except Exception as e:
                                 st.error(f"Error generating response: {str(e)}")
@@ -626,7 +626,7 @@ class DataProcessor:
                     
                     try:
                         response = model.generate_content(prompt)
-                        st.subheader("🤖 AI Code Insights")
+                        st.subheader("✨ AI Code Insights")
                         st.markdown(f'<div class="info-box">{response.text}</div>', 
                                    unsafe_allow_html=True)
                     except Exception as e:
