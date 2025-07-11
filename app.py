@@ -34,100 +34,62 @@ st.set_page_config(
 # Custom CSS for better UI
 st.markdown("""
 <style>
-    /* Glassy background for the whole app */
-    .stApp {
-        background: linear-gradient(135deg, rgba(102,126,234,0.25) 0%, rgba(76,205,196,0.18) 100%);
-        backdrop-filter: blur(8px);
-        min-height: 100vh;
-    }
-
-    /* Remove default grey/black backgrounds from Streamlit containers */
-    .block-container, .main, .stTabs, .stTabs [data-baseweb="tab-list"], .stTabs [data-baseweb="tab"],
-    [data-testid="stVerticalBlock"], [data-testid="stHorizontalBlock"], [data-testid="stExpander"], [data-testid="stDataFrame"] {
-        background: transparent !important;
-        box-shadow: none !important;
-    }
-
-    /* Glassy style for interactive widgets */
-    .stTextInput > div > div > input,
-    .stTextArea > div > div > textarea,
-    .stSelectbox > div > div > div,
-    .stSlider > div > div,
-    .stFileUploader > div > div,
-    .stButton > button {
-        background: rgba(255,255,255,0.15);
-        border-radius: 10px;
-        border: 1px solid rgba(255,255,255,0.2);
-        box-shadow: 0 2px 10px rgba(102,126,234,0.08);
-        backdrop-filter: blur(6px);
-        color: #222 !important;
-    }
-
-    /* Ensure text in inputs is readable */
-    .stTextInput > div > div > input,
-    .stTextArea > div > div > textarea {
-        color: #222 !important;
-    }
-
-    /* Style for buttons */
-    .stButton > button {
-        background: rgba(76,205,196,0.25) !important;
-        color: #222 !important;
+    .main-header {
+        font-size: 3rem;
         font-weight: bold;
-        border: 1px solid rgba(76,205,196,0.3);
-        box-shadow: 0 2px 8px rgba(76,205,196,0.15);
+        text-align: center;
+        background: linear-gradient(45deg, #FF6B6B, #4ECDC4, #45B7D1);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 2rem;
     }
-
-    /* Glassy card style for all custom boxes */
-    .metric-card, .success-box, .info-box, .warning-box {
-        background: rgba(255,255,255,0.18);
-        border-radius: 16px;
-        box-shadow: 0 4px 24px rgba(102,126,234,0.12);
-        color: #222 !important;
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255,255,255,0.25);
+    
+    .metric-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 1rem;
+        border-radius: 10px;
+        color: white;
+        margin: 0.5rem 0;
     }
-
-    /* Make tab headers glassy and text readable */
+    
+    .success-box {
+        background: linear-gradient(90deg, #11998e, #38ef7d);
+        padding: 1rem;
+        border-radius: 10px;
+        color: white;
+        margin: 1rem 0;
+    }
+    
+    .info-box {
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        padding: 1rem;
+        border-radius: 10px;
+        color: white;
+        margin: 1rem 0;
+    }
+    
+    .warning-box {
+        background: linear-gradient(90deg, #ff9a9e, #fecfef);
+        padding: 1rem;
+        border-radius: 10px;
+        color: #333;
+        margin: 1rem 0;
+    }
+    
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 2px;
+    }
+    
     .stTabs [data-baseweb="tab"] {
-        background: rgba(255,255,255,0.22) !important;
-        color: #222 !important;
-        font-weight: bold;
+        height: 50px;
+        background: linear-gradient(45deg, #667eea, #764ba2);
         border-radius: 10px;
-        box-shadow: 0 2px 8px rgba(76,205,196,0.10);
-        backdrop-filter: blur(8px);
+        color: white;
+        font-weight: bold;
     }
+    
     .stTabs [aria-selected="true"] {
-        background: rgba(76,205,196,0.25) !important;
-        color: #222 !important;
-    }
-
-    /* Make sidebar glassy */
-    section[data-testid="stSidebar"] {
-        background: rgba(255,255,255,0.18) !important;
-        border-radius: 16px;
-        box-shadow: 0 4px 24px rgba(102,126,234,0.12);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255,255,255,0.25);
-    }
-
-    /* Make footer glassy */
-    .footer-glass {
-        background: rgba(255,255,255,0.18);
-        border-radius: 16px;
-        box-shadow: 0 4px 24px rgba(102,126,234,0.12);
-        color: #222 !important;
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255,255,255,0.25);
-        padding: 2rem;
-        margin-top: 2rem;
-    }
-
-    /* Ensure all text is clear and easy to read */
-    body, .stApp, .main-header, .metric-card, .success-box, .info-box, .warning-box, .stTabs [data-baseweb="tab"], .stTabs [aria-selected="true"] {
-        color: #222 !important;
-        text-shadow: 0 1px 2px rgba(255,255,255,0.08);
-        font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+        background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
     }
 </style>
 """, unsafe_allow_html=True)
@@ -467,7 +429,6 @@ Answer:"""
                     labels={'x': 'Query Number', 'y': 'Response Time (s)'}
                 )
                 fig.update_traces(line_color='#4ECDC4')
-                fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
                 st.plotly_chart(fig, use_container_width=True)
             
             with col2:
@@ -478,7 +439,6 @@ Answer:"""
                     labels={'x': 'Response Time (s)', 'y': 'Frequency'}
                 )
                 fig.update_traces(marker_color='#FF6B6B')
-                fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
                 st.plotly_chart(fig, use_container_width=True)
         
         # RAG Pipeline Visualization
@@ -516,7 +476,7 @@ Answer:"""
             title="Performance Comparison: RAG vs Standard LLM",
             barmode='group'
         )
-        fig.update_layout(height=400, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+        fig.update_layout(height=400)
         st.plotly_chart(fig, use_container_width=True)
     
     # Tab 2: Vectorized Memory
@@ -624,9 +584,8 @@ Answer:"""
             # Memory growth chart
             if total_memories > 0:
                 memory_growth = list(range(1, total_memories + 1))
-                fig = px.line(x=list(range(len(memory_growth))), y=memory_growth,
+                fig = px.line(x=list(range(len(memory_growth))), y=memory_growth, 
                              title="Memory Growth Over Time")
-                fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
                 st.plotly_chart(fig, use_container_width=True)
     
     # Tab 3: Text Compression
@@ -696,9 +655,8 @@ Answer:"""
                     'Tokens': [result['original_tokens'], result['compressed_tokens']]
                 }
                 
-                fig = px.bar(savings_data, x='Type', y='Tokens',
+                fig = px.bar(savings_data, x='Type', y='Tokens', 
                            title="Token Savings Visualization")
-                fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
                 st.plotly_chart(fig, use_container_width=True)
         
         # Compression techniques comparison
@@ -716,7 +674,6 @@ Answer:"""
         fig = px.scatter(df, x='Compression Ratio', y='Quality Score', 
                         size='Speed (ms)', hover_name='Technique',
                         title="Compression Techniques Performance")
-        fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
         st.plotly_chart(fig, use_container_width=True)
     
     # Tab 4: Codebase Analysis
@@ -801,9 +758,8 @@ class DataProcessor:
                              (analysis['comment_lines'] / analysis['total_lines']) * 10]
                 }
                 
-                fig = px.bar(complexity_data, x='Metric', y='Score',
+                fig = px.bar(complexity_data, x='Metric', y='Score', 
                            title="Code Quality Metrics")
-                fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
                 st.plotly_chart(fig, use_container_width=True)
                 
                 # Generate insights with Gemini
@@ -897,24 +853,24 @@ class DataProcessor:
                 )
                 
                 fig.add_trace(
-                    go.Scatter(x=progress['epochs'], y=progress['train_loss'],
+                    go.Scatter(x=progress['epochs'], y=progress['train_loss'], 
                              name='Training Loss', line=dict(color='blue')),
                     row=1, col=1
                 )
                 
                 fig.add_trace(
-                    go.Scatter(x=progress['epochs'], y=progress['val_loss'],
+                    go.Scatter(x=progress['epochs'], y=progress['val_loss'], 
                              name='Validation Loss', line=dict(color='red')),
                     row=1, col=1
                 )
                 
                 fig.add_trace(
-                    go.Scatter(x=progress['epochs'], y=progress['accuracy'],
+                    go.Scatter(x=progress['epochs'], y=progress['accuracy'], 
                              name='Accuracy', line=dict(color='green')),
                     row=2, col=1
                 )
                 
-                fig.update_layout(height=500, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+                fig.update_layout(height=500)
                 st.plotly_chart(fig, use_container_width=True)
                 
                 # Final metrics
@@ -946,7 +902,6 @@ class DataProcessor:
         fig = px.scatter(df_techniques, x='Memory Usage (GB)', y='Performance Score', 
                         size='Training Time (hours)', hover_name='Technique',
                         title="Fine-tuning Techniques Comparison")
-        fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
         st.plotly_chart(fig, use_container_width=True)
         
         # Fine-tuning process flow
@@ -1006,9 +961,8 @@ class DataProcessor:
                 'Response Time (ms)': response_times
             })
             
-            fig = px.line(df_response, x='Date', y='Response Time (ms)',
+            fig = px.line(df_response, x='Date', y='Response Time (ms)', 
                          title="Daily Response Time Trends")
-            fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
             st.plotly_chart(fig, use_container_width=True)
         
         with col2:
@@ -1020,9 +974,8 @@ class DataProcessor:
                 'Accuracy': accuracy_data
             })
             
-            fig = px.line(df_accuracy, x='Date', y='Accuracy',
+            fig = px.line(df_accuracy, x='Date', y='Accuracy', 
                          title="Model Accuracy Trends")
-            fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
             st.plotly_chart(fig, use_container_width=True)
         
         # System resource usage
@@ -1043,10 +996,9 @@ class DataProcessor:
         
         fig = px.line(resource_df, x='Hour', y=['CPU Usage (%)', 'Memory Usage (%)', 'GPU Usage (%)'],
                      title="24-Hour Resource Usage")
-        fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
         st.plotly_chart(fig, use_container_width=True)
-    
-    # Model comparison matrix
+        
+        # Model comparison matrix
         st.subheader("🔍 Model Performance Comparison")
         
         models_data = {
@@ -1065,7 +1017,6 @@ class DataProcessor:
             aspect="auto",
             title="Model Performance Heatmap"
         )
-        fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
         st.plotly_chart(fig, use_container_width=True)
         
         # A/B Testing Results
@@ -1080,9 +1031,8 @@ class DataProcessor:
         
         df_ab = pd.DataFrame(ab_test_data)
         
-        fig = px.bar(df_ab, x='Test', y=['Variant A', 'Variant B'],
+        fig = px.bar(df_ab, x='Test', y=['Variant A', 'Variant B'], 
                     title="A/B Test Results Comparison", barmode='group')
-        fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
         st.plotly_chart(fig, use_container_width=True)
         
         # Live model monitoring
@@ -1150,11 +1100,11 @@ class DataProcessor:
     # Footer with additional info
     st.markdown("---")
     st.markdown("""
-    <div class="footer-glass" style="text-align: center;">
+    <div style="text-align: center; padding: 2rem; background: linear-gradient(45deg, #667eea, #764ba2); color: white; border-radius: 10px; margin-top: 2rem;">
         <h3>🦄 Advanced LLM Techniques Showcase</h3>
         <p>This application demonstrates cutting-edge techniques in Large Language Model optimization and deployment.</p>
         <p><strong>Built with:</strong> Streamlit • Gemini API • Advanced ML Techniques</p>
-    </div>
+    </div>  
     """, unsafe_allow_html=True)
 
 if __name__ == "__main__":
