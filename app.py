@@ -174,7 +174,7 @@ def create_network_graph(relationships):
 
 # Main app
 def main():
-    st.markdown('<h1 class="main-header">🚀 Advanced LLM Techniques Showcase</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 class="main-header">🦄 Advanced LLM Techniques Showcase</h1>', unsafe_allow_html=True)
     
     # Initialize Gemini
     model = init_gemini()
