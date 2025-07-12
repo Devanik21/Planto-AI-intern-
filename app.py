@@ -947,7 +947,6 @@ Answer:"""
         
         with col1:
             st.subheader("📁 Codebase Upload")
-{{ ... }}
             
             uploaded_code = st.file_uploader(
                 "Upload code files", 
