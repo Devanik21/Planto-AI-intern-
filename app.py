@@ -1055,6 +1055,7 @@ class DataProcessor:
         
         # Create a mock dependency graph
         if 'code_analysis' in st.session_state:
+            # Create figure and axes explicitly
             fig, ax = plt.subplots(figsize=(12, 8))
             
             # Create a simple network graph
@@ -1064,9 +1065,6 @@ class DataProcessor:
             G.add_edge("models.py", "database.py")
             G.add_edge("utils.py", "config.py")
             
-            # Clear any existing plot
-            ax.clear()
-            
             # Draw the network graph
             pos = nx.spring_layout(G)
             nx.draw(G, pos, with_labels=True, node_color='lightblue', 
@@ -1074,8 +1072,8 @@ class DataProcessor:
             
             ax.set_title("Code Dependency Graph")
             
-            # Explicitly pass the figure to st.pyplot()
-            st.pyplot(fig, clear_figure=True)
+            # Pass the figure to st.pyplot()
+            st.pyplot(fig)
     
     # Tab 5: Fine-tuning Insights
     with tab5:
