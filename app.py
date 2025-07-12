@@ -1064,12 +1064,18 @@ class DataProcessor:
             G.add_edge("models.py", "database.py")
             G.add_edge("utils.py", "config.py")
             
+            # Clear any existing plot
+            ax.clear()
+            
+            # Draw the network graph
             pos = nx.spring_layout(G)
             nx.draw(G, pos, with_labels=True, node_color='lightblue', 
                    node_size=1500, font_size=10, font_weight='bold', ax=ax)
             
             ax.set_title("Code Dependency Graph")
-            st.pyplot(fig)
+            
+            # Explicitly pass the figure to st.pyplot()
+            st.pyplot(fig, clear_figure=True)
     
     # Tab 5: Fine-tuning Insights
     with tab5:
