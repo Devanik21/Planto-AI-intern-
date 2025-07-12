@@ -208,12 +208,14 @@ def main():
         st.metric("Avg Response Time", f"{stats['avg_response_time']:.2f}s")
     
     # Main content tabs
-    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+    tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs([
         "🔍 RAG System", 
         "🧠 Vectorized Memory", 
         "📝 Text Compression", 
         "💻 Codebase Analysis", 
         "🎯 Fine-tuning Insights",
+        "📊 Data Visualization",
+        "📈 Network Analysis",
         "📊 Performance Dashboard"
     ])
     
@@ -588,6 +590,90 @@ Answer:"""
                              title="Memory Growth Over Time")
                 st.plotly_chart(fig, use_container_width=True)
     
+    # Tab 6: Data Visualization
+    with tab6:
+        st.header("📊 Data Visualization")
+        
+        # Initialize visualization state
+        if 'visualization_data' not in st.session_state:
+            st.session_state.visualization_data = {
+                'text_data': [],
+                'word_cloud': None,
+                'sentiment_scores': [],
+                'topic_distribution': {}
+            }
+        
+        # Text input for visualization
+        st.subheader("📝 Enter Text for Analysis")
+        input_text = st.text_area("Text Data", height=200)
+        
+        if st.button("Generate Visualizations", type="primary"):
+            if input_text.strip():
+                # Update session state
+                st.session_state.visualization_data['text_data'].append(input_text)
+                
+                # Create word cloud
+                wordcloud = WordCloud(
+                    background_color='white',
+                    max_words=100,
+                    width=800,
+                    height=400
+                ).generate(input_text)
+                
+                # Save word cloud to session state
+                st.session_state.visualization_data['word_cloud'] = wordcloud
+                
+                # Display visualizations
+                st.subheader("🎨 Word Cloud")
+                plt.figure(figsize=(10, 6))
+                plt.imshow(wordcloud, interpolation='bilinear')
+                plt.axis('off')
+                st.pyplot()
+                
+                # Display text statistics
+                st.subheader("📊 Text Statistics")
+                text_stats = {
+                    'Word Count': len(input_text.split()),
+                    'Character Count': len(input_text),
+                    'Unique Words': len(set(input_text.lower().split())),
+                    'Average Word Length': round(sum(len(word) for word in input_text.split()) / len(input_text.split()), 2)
+                }
+                
+                stats_df = pd.DataFrame([text_stats])
+                st.dataframe(stats_df.T, use_container_width=True)
+                
+                # Display word frequency distribution
+                st.subheader("📈 Word Frequency Distribution")
+                words = input_text.lower().split()
+                word_freq = pd.Series(words).value_counts().head(20)
+                fig = px.bar(
+                    word_freq,
+                    title="Top 20 Most Frequent Words",
+                    labels={'index': 'Word', 'value': 'Frequency'}
+                )
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.warning("Please enter text to analyze.")
+        
+        # Display historical visualizations
+        if len(st.session_state.visualization_data['text_data']) > 1:
+            st.subheader("📋 Historical Analysis")
+            
+            # Create combined word cloud
+            combined_text = ' '.join(st.session_state.visualization_data['text_data'])
+            combined_wordcloud = WordCloud(
+                background_color='white',
+                max_words=100,
+                width=800,
+                height=400
+            ).generate(combined_text)
+            
+            st.subheader("🎨 Combined Word Cloud")
+            plt.figure(figsize=(10, 6))
+            plt.imshow(combined_wordcloud, interpolation='bilinear')
+            plt.axis('off')
+            st.pyplot()
+    
     # Tab 3: Text Compression
     with tab3:
         st.header("📝 Text-to-Prompt Compression")
@@ -719,6 +805,140 @@ Answer:"""
                         title="Compression Techniques Performance")
         st.plotly_chart(fig, use_container_width=True)
     
+    # Tab 7: Network Analysis
+    with tab7:
+        st.header("📈 Network Analysis")
+        
+        # Initialize network state
+        if 'network_data' not in st.session_state:
+            st.session_state.network_data = {
+                'nodes': [],
+                'edges': [],
+                'graph': None,
+                'metrics': {
+                    'total_nodes': 0,
+                    'total_edges': 0,
+                    'avg_degree': 0.0,
+                    'density': 0.0
+                }
+            }
+        
+        # Network input
+        st.subheader("🌐 Enter Network Data")
+        
+        # Node input
+        with st.expander("➕ Add Nodes"):
+            node_name = st.text_input("Node Name")
+            node_attributes = st.text_input("Node Attributes (comma-separated)")
+            if st.button("Add Node", key="add_node"):
+                if node_name:
+                    st.session_state.network_data['nodes'].append({
+                        'name': node_name,
+                        'attributes': node_attributes.split(',') if node_attributes else []
+                    })
+                    st.success(f"✅ Node '{node_name}' added successfully!")
+                    st.rerun()
+                else:
+                    st.warning("Please enter a node name.")
+        
+        # Edge input
+        with st.expander("🔗 Add Edges"):
+            source = st.selectbox("Source Node", [n['name'] for n in st.session_state.network_data['nodes']])
+            target = st.selectbox("Target Node", [n['name'] for n in st.session_state.network_data['nodes']])
+            edge_weight = st.slider("Edge Weight", 0.0, 1.0, 0.5)
+            
+            if st.button("Add Edge", key="add_edge"):
+                if source and target and source != target:
+                    st.session_state.network_data['edges'].append({
+                        'source': source,
+                        'target': target,
+                        'weight': edge_weight
+                    })
+                    st.success(f"✅ Edge between '{source}' and '{target}' added successfully!")
+                    st.rerun()
+                else:
+                    st.warning("Please select two different nodes.")
+        
+        # Create network graph
+        if st.session_state.network_data['nodes'] and st.session_state.network_data['edges']:
+            # Create graph
+            G = nx.Graph()
+            
+            # Add nodes
+            for node in st.session_state.network_data['nodes']:
+                G.add_node(node['name'], attributes=node['attributes'])
+            
+            # Add edges
+            for edge in st.session_state.network_data['edges']:
+                G.add_edge(edge['source'], edge['target'], weight=edge['weight'])
+            
+            # Update session state
+            st.session_state.network_data['graph'] = G
+            
+            # Calculate metrics
+            st.session_state.network_data['metrics']['total_nodes'] = G.number_of_nodes()
+            st.session_state.network_data['metrics']['total_edges'] = G.number_of_edges()
+            st.session_state.network_data['metrics']['avg_degree'] = sum(dict(G.degree()).values()) / G.number_of_nodes()
+            st.session_state.network_data['metrics']['density'] = nx.density(G)
+            
+            # Display network metrics
+            st.subheader("📊 Network Metrics")
+            col1, col2, col3, col4 = st.columns(4)
+            with col1:
+                st.metric("Nodes", st.session_state.network_data['metrics']['total_nodes'])
+            with col2:
+                st.metric("Edges", st.session_state.network_data['metrics']['total_edges'])
+            with col3:
+                st.metric("Average Degree", f"{st.session_state.network_data['metrics']['avg_degree']:.2f}")
+            with col4:
+                st.metric("Density", f"{st.session_state.network_data['metrics']['density']:.2f}")
+            
+            # Display network visualization
+            st.subheader("🌐 Network Visualization")
+            
+            # Create layout
+            pos = nx.spring_layout(G)
+            
+            # Draw nodes
+            plt.figure(figsize=(10, 8))
+            nx.draw_networkx_nodes(G, pos, node_size=500, alpha=0.8)
+            nx.draw_networkx_labels(G, pos, font_size=10)
+            
+            # Draw edges with weights
+            for edge in G.edges(data=True):
+                nx.draw_networkx_edges(
+                    G, pos,
+                    edgelist=[(edge[0], edge[1])],
+                    width=edge[2]['weight'] * 5,
+                    alpha=0.5
+                )
+            
+            # Draw edge weights
+            edge_labels = nx.get_edge_attributes(G, 'weight')
+            nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
+            
+            st.pyplot()
+            
+            # Display node attributes
+            st.subheader("📋 Node Attributes")
+            attributes_df = pd.DataFrame([
+                {'Node': node, 'Attributes': ', '.join(G.nodes[node]['attributes'])}
+                for node in G.nodes()
+            ])
+            st.dataframe(attributes_df, use_container_width=True)
+            
+            # Display edge list
+            st.subheader("🔗 Edge List")
+            edges_df = pd.DataFrame([
+                {
+                    'Source': edge[0],
+                    'Target': edge[1],
+                    'Weight': edge[2]['weight']
+                }
+                for edge in G.edges(data=True)
+            ])
+            st.dataframe(edges_df, use_container_width=True)
+
     # Tab 4: Codebase Analysis
     with tab4:
         st.header("💻 Large Codebase Analysis")
@@ -727,6 +947,7 @@ Answer:"""
         
         with col1:
             st.subheader("📁 Codebase Upload")
+{{ ... }}
             
             uploaded_code = st.file_uploader(
                 "Upload code files", 
