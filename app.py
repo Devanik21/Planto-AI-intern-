@@ -606,27 +606,8 @@ Answer:"""
             applications, such as in medicine, email filtering, speech recognition, and computer vision, 
             where it is difficult or unfeasible to develop conventional algorithms to perform the needed tasks.
             
-            Machine learning systems can be categorized into supervised, unsupervised, and reinforcement learning.
-            Supervised learning involves training a model on labeled data, where the desired output is known.
-            Unsupervised learning deals with data that has no labels, aiming to find hidden patterns or groupings.
-            Reinforcement learning trains an agent to make sequences of decisions by rewarding desirable behaviors.
-            Training a machine learning model involves feeding it large volumes of data and optimizing its performance.
-            The quality and quantity of training data play a critical role in the accuracy of the final model.
-            Feature engineering is a crucial step where raw data is transformed into meaningful inputs for algorithms.
-            Popular tools and libraries for machine learning include TensorFlow, PyTorch, and Scikit-learn.
-            Deep learning, a subset of machine learning, uses neural networks with multiple layers for high-level abstraction.
-            Neural networks are inspired by the structure and function of the human brain.
-            Convolutional Neural Networks (CNNs) are particularly effective for image recognition tasks.
-            Recurrent Neural Networks (RNNs) are suitable for sequential data like time series or natural language.
-            Transfer learning enables reusing parts of a pre-trained model to solve new but related tasks efficiently.
-            Overfitting is a common issue where a model performs well on training data but poorly on unseen data.
-            Regularization techniques such as L1 and L2 are used to reduce overfitting in machine learning models.
-            Cross-validation is a strategy to evaluate model performance and ensure it generalizes well to new data.
-            Hyperparameter tuning helps optimize model behavior by adjusting configuration settings like learning rate.
-            Model evaluation metrics vary by task, such as accuracy, precision, recall, and F1 score.
-            Ethical considerations in machine learning include data privacy, fairness, and transparency.
-            As technology evolves, machine learning continues to push boundaries across industries and research fields.
-"""
+            
+            """
 
             
             input_text = st.text_area("Enter text to compress:", value=sample_text, height=200)
